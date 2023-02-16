@@ -4,6 +4,8 @@ import {ErrorResponse} from '../middlewares/errorResponse';
 import {sendEmail} from '../utils/emailSender'
 import crypto from 'crypto'
 import  Logger  from "../logger/logger";
+import { loggers } from 'winston';
+import logger from '../logger/logger';
 
 
 export const register= async(req:Request,res:Response,next:any)=>{
@@ -36,7 +38,7 @@ export const login = async(req:Request,res:Response,next:any)=>{
         return next(new ErrorResponse("Please provide a valid email and Password",400))
     };
     try {
-        const user:IUser | null = await User.findOne({email});
+        const user:IUser | null = await User.findOne({email:email}).select("+password");
         
         console.log(user);
 
@@ -70,17 +72,13 @@ export const login = async(req:Request,res:Response,next:any)=>{
             return next(new ErrorResponse("Please provide your email adress",400))
         };
         try {
-        const user:IUser | null = await User.findOne({user:email});
-
-            // const user:IUser | null= await User.findOne({user:email})
-            console.log(user);
-            
+        const user:IUser | null = await User.findOne({email:email});
             if (!user){
-               
                 return next(new ErrorResponse("Email could not be sent",404));
-                
             }
             const resetToken=user.getResetPasswordToken();
+            logger.warn(resetToken);
+
             await user.save();
     
             const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;

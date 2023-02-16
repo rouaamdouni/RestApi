@@ -2,8 +2,11 @@ import bycrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from 'crypto';
 import { model, Schema, Model, Document } from 'mongoose';
-import Logger from "../logger/logger";
-
+//import Logger from "../logger/logger";
+var encrypt = require('mongoose-encryption');
+//mongoose encryption
+const encryptionKey = crypto.randomBytes(32).toString('base64');
+const signingKey = crypto.randomBytes(64).toString('base64');
 //declare user type
 export interface IUser extends Document {
     getResetPasswordToken():string;
@@ -24,14 +27,14 @@ export interface IUser extends Document {
         firstName: { 
             type: String,
             lowercase: true,
-            unique: true,
+            unique: false,
             required: [true, "Can't be blank"],
             index: true
         },
         lastName: { 
             type: String,
             lowercase: true,
-            unique: true,
+            unique: false,
             required: [true, "Can't be blank"],
             index: true
         },
@@ -48,6 +51,7 @@ export interface IUser extends Document {
         required: [true, "Can't be blank"],
         match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please use a valid address'],
         unique:true,
+        index: true
        
     },
     resetPasswordToken: String,
@@ -55,16 +59,12 @@ export interface IUser extends Document {
 
     active: { type: Boolean, default: true }
 });
-
+UserSchema.plugin(encrypt, { encryptionKey:encryptionKey , signingKey:signingKey,excludeFromEncryption: ['password']  });
 UserSchema.pre<IUser>("save", async function (next: any) {
     if (!this.isModified('password')) {
         return next();
     }
-    const salt = await bycrypt.genSalt(10);
     this.password = bycrypt.hashSync(this.password, 10);
-    this.firstName = bycrypt.hashSync(this.firstName,10);
-    this.lastName = bycrypt.hashSync(this.lastName,10);
-    this.email = bycrypt.hashSync(this.email,10);
     next();
 });
 
@@ -76,6 +76,7 @@ UserSchema.methods.getSignedToken= function (password:string) {
         expiresIn:process.env.JWT_EXPIRE
     })   
 }
+
 UserSchema.methods.getResetPasswordToken= function () {
     const resetToken= crypto.randomBytes(20).toString('hex');
     this.resetPasswordToken= crypto.
