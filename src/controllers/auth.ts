@@ -9,7 +9,7 @@ import  Logger  from "../logger/logger";
 export const register= async(req:Request,res:Response,next:any)=>{
     const {firstName,lastName,email,password}=req.body;
     try {
-        const user:IUser= await User.create({
+        const user= await User.create({
             firstName,
             lastName,
             email,
@@ -36,13 +36,15 @@ export const login = async(req:Request,res:Response,next:any)=>{
         return next(new ErrorResponse("Please provide a valid email and Password",400))
     };
     try {
-        const user:IUser | null = await User.findOne({email} ).select("+password")
+        const user:IUser | null = await User.findOne({email});
+        
         console.log(user);
 
         if (!user){
             Logger.error("User not found");
             return next(new ErrorResponse("Invalid Credentials",401))
         }
+  
         const isMatch:boolean= await user.matchPassword(password);
         Logger.warn(isMatch);
         

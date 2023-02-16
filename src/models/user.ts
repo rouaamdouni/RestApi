@@ -2,6 +2,7 @@ import bycrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from 'crypto';
 import { model, Schema, Model, Document } from 'mongoose';
+import Logger from "../logger/logger";
 
 //declare user type
 export interface IUser extends Document {
@@ -64,7 +65,6 @@ UserSchema.pre<IUser>("save", async function (next: any) {
     this.firstName = bycrypt.hashSync(this.firstName,10);
     this.lastName = bycrypt.hashSync(this.lastName,10);
     this.email = bycrypt.hashSync(this.email,10);
-
     next();
 });
 
