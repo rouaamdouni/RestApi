@@ -10,6 +10,9 @@ import {json} from 'body-parser'
 import mongoose from 'mongoose'
 import { connectDB } from "./config/db";
 import  router  from "./routes/auth";
+import crudRouter from "./routes/crud";
+
+// import crudRouter from "./routes/crud";
 
 
 const app= express();
@@ -22,6 +25,7 @@ connectDB()
 
 app.use(express.json());
 app.use("/auth", router);
+app.use("/crud",crudRouter)
 
 
 

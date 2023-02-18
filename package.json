@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.0.1",
     "mongoose": "^6.9.1",
+    "mongoose-auto-increment": "^5.0.1",
     "mongoose-encryption": "^2.1.2",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.1",
@@ -36,6 +37,7 @@
     "@types/express-jwt": "^7.4.2",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/mongoose": "^5.11.97",
+    "@types/mongoose-auto-increment": "^5.0.35",
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.13.0",
     "@types/nodemailer": "^6.4.7"

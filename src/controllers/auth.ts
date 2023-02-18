@@ -9,9 +9,10 @@ import logger from '../logger/logger';
 
 
 export const register= async(req:Request,res:Response,next:any)=>{
-    const {firstName,lastName,email,password}=req.body;
+    const {id,firstName,lastName,email,password}=req.body;
     try {
         const user= await User.create({
+            id,
             firstName,
             lastName,
             email,
