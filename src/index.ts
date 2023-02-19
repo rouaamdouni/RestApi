@@ -1,23 +1,16 @@
-require('dotenv').config({path:'./config.env'});
+import dotenv from 'dotenv';
 import  Logger  from "./logger/logger";
 import morganMiddleware from "./logger/morganMiddleware";
 
 import express from "express";
-import cors from "cors";
-import cookieParser from 'cookie-parser';
-import morgan from 'morgan';
-import {json} from 'body-parser'
-import mongoose from 'mongoose'
 import { connectDB } from "./config/db";
 import  router  from "./routes/auth";
 import crudRouter from "./routes/crud";
+import path from 'path';
 
 // import crudRouter from "./routes/crud";
-
-
 const app= express();
 const PORT= process.env.PORT || 5000;
-//import errorHandler from './middleware/error';
 app.use(morganMiddleware);
 
 //connect to db

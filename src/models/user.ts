@@ -7,10 +7,12 @@ autoIncrement.initialize(mongoose.connection);
 import { model, Schema, Model, Document } from 'mongoose';
 //import Logger from "../logger/logger";
 var encrypt = require('mongoose-encryption');
+require('dotenv').config({path:'../.env'});
 
 //mongoose encryption
-const encryptionKey = crypto.randomBytes(32).toString('base64');
-const signingKey = crypto.randomBytes(64).toString('base64');
+const encryptionKey = process.env.ENCRYPTION_KEY;
+const signingKey = process.env.SIGNING_KEY;
+
 
 //declare user type
 export interface IUser extends Document {
@@ -70,18 +72,22 @@ const UserSchema: Schema = new Schema({
 
     active: { type: Boolean, default: true }
 });
+// UserSchema.method("toJSON", function() {
+//     const { __v, _id, ...object } = this.toObject();
+//     object.id = _id;
+//     return object;
+//   });
 UserSchema.method("toJSON", function() {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
+    const { __v, ...object } = this.toObject();
+    object.id = this._id;
     return object;
-  });
-
-UserSchema.plugin(encrypt, { encryptionKey: encryptionKey, signingKey: signingKey});
+});
 //excludeFromEncryption: ['password',"id"] 
 UserSchema.pre<IUser>("save", async function (next: any) {
     if (!this.isModified('password')) {
         return next();
     }
+    UserSchema.plugin(encrypt, { encryptionKey: encryptionKey, signingKey: signingKey});
     this.password = bycrypt.hashSync(this.password, 10);
     next();
 });

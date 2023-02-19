@@ -11,7 +11,7 @@ import logger from '../logger/logger';
 export const register= async(req:Request,res:Response,next:any)=>{
     const {id,firstName,lastName,email,password}=req.body;
     try {
-        const user= await User.create({
+        const user:IUser= await User.create({
             id,
             firstName,
             lastName,
@@ -20,7 +20,8 @@ export const register= async(req:Request,res:Response,next:any)=>{
         }).then(
            ()=>res.status(201).json({
                 status:201,
-                message:"user created successfully"
+                message:"user created successfully",
+
             } 
             )
        ).catch(

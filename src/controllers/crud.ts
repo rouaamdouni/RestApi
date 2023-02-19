@@ -2,11 +2,10 @@
 import { Response, Request } from 'express';
 import {IUser,User} from '../models/user'; 
 import {ErrorResponse} from '../middlewares/errorResponse';
-import Logger from '../logger/logger';
 
 
 export const getUsers = async (req:Request,res:Response,next:any) => {
-    
+
     try {
         const users = await User.find();
         console.log(users);
@@ -27,12 +26,7 @@ export const getUsers = async (req:Request,res:Response,next:any) => {
 export const getUserById = async (req: Request, res: Response) => {
     try {
       const userId = req.params.id;
-     
-
-      
-    //   const user = await User.findOne({id:userId});
     const user:IUser | null = await User.findOne({id:userId});
-    Logger.info(`User id: ${user}`);
       if (!user) {
         return res.status(404).json({
           status: 'fail',
@@ -56,11 +50,11 @@ export const getUserById = async (req: Request, res: Response) => {
   // UPDATE
   export const updateUser = async (req: Request, res: Response) => {
     try {
-      const userId = req.params.id;
-      const { firstName, lastName, password, email } = req.body;
+      const userId =req.params.id;
+      const {firstName, lastName, password, email } = req.body;
   //kaad yretrivi bel doc_id 
       const updatedUser = await User.findByIdAndUpdate(
-        Number(userId),
+        userId,
         {
           firstName,
           lastName,
@@ -107,6 +101,7 @@ export const getUserById = async (req: Request, res: Response) => {
       return res.status(204).json({
         status: 'success',
         data: null,
+        message: 'User deleted successfully'
       });
     } catch (error) {
       console.error(error);
