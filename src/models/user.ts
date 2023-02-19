@@ -72,11 +72,7 @@ const UserSchema: Schema = new Schema({
 
     active: { type: Boolean, default: true }
 });
-// UserSchema.method("toJSON", function() {
-//     const { __v, _id, ...object } = this.toObject();
-//     object.id = _id;
-//     return object;
-//   });
+
 UserSchema.method("toJSON", function() {
     const { __v, ...object } = this.toObject();
     object.id = this._id;
@@ -95,11 +91,14 @@ UserSchema.pre<IUser>("save", async function (next: any) {
 UserSchema.methods.matchPassword = async function (password: string) {
     return await bycrypt.compare(password, this.password)
 }
+
+
 UserSchema.methods.getSignedToken = function (password: string) {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET!, {
         expiresIn: process.env.JWT_EXPIRE
     })
 }
+
 
 UserSchema.methods.getResetPasswordToken = function () {
     const resetToken = crypto.randomBytes(20).toString('hex');

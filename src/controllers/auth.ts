@@ -75,15 +75,15 @@ export const login = async(req:Request,res:Response,next:any)=>{
         };
         try {
         const user:IUser | null = await User.findOne({email:email});
+        logger.error(user);
+
             if (!user){
                 return next(new ErrorResponse("Email could not be sent",404));
             }
             const resetToken=user.getResetPasswordToken();
-            logger.warn(resetToken);
-
             await user.save();
     
-            const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
+            const resetUrl = `http://localhost:5050/passwordreset/${resetToken}`;
             const message = `
             <h1> You have requested a password reset </h1>
             <p> Please go to this link to reset your password </p>
@@ -98,7 +98,9 @@ export const login = async(req:Request,res:Response,next:any)=>{
                res.status(200)
                .json({
                    success: true,
-                   data:"Email Sent"
+                   data:"Email Sent",
+                   messsage: message
+
                })
             } catch (error) {
                 user.resetPasswordToken=undefined;
@@ -114,6 +116,7 @@ export const login = async(req:Request,res:Response,next:any)=>{
     };
     export const resetPassword=async(req:Request,res:Response,next:any)=>{
         const {password} = req.body
+        Logger.debug(password)
         const resetPasswordToken = crypto.createHash("sha256")
         .update(req.params.resetToken)
         .digest('hex');
@@ -143,3 +146,5 @@ export const login = async(req:Request,res:Response,next:any)=>{
     };
 
  
+   
+    
