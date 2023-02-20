@@ -30,7 +30,7 @@ export interface IUser extends Document {
    
 }
 // define user schema
-const UserSchema: Schema = new Schema({
+export const UserSchema: Schema = new Schema({
     id:{
         type: Number,
         required: true,
