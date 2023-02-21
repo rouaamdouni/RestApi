@@ -6,7 +6,7 @@ const swaggerDefinition = {
           title: 'Rest Api',
           version: '1.0.0',
           description:
-            'This is a REST API application made with Express typescript . It retrieves data from NoSQL Database .'
+            'This is a REST API application made with Express typescript . It retrieves data from NoSQL Database (MongoDB) .'
         },
         servers: [
           {
@@ -15,7 +15,7 @@ const swaggerDefinition = {
           },
         ],
         paths: {
-            "/crud/register": {
+            "/auth/register": {
               "post": {
                 "tags": ["ExampleEndpoints"],
                 "summary": "register a new user",
@@ -38,7 +38,7 @@ const swaggerDefinition = {
                     "content": {
                       "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/ExampleSchemaHeader"
+                            // "$ref": "#/components/schemas/ExampleSchemaHeader"
 
                         }
                       }
@@ -48,30 +48,119 @@ const swaggerDefinition = {
                   "500": { "description": "Internal server error" }
                 }
               }
-            }
-          },
-          "components": {
-            "schemas": {
-              "ExampleSchemaBody": {
-                "properties": {
-                  "responseText": {
-                    "type": "string",
-                    "example": ""
-                                
-                
+            },
+            "/auth/login": {
+              "post": {
+                "tags": ["ExampleEndpoints"],
+                "summary": "Login ",
+                "description": "Send email and password to the server and check if they are valid.",
+
+
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": `${UserSchema}`
+
+                      }
+                    }
                   }
-                }
-              },
-              "ExampleSchemaHeader": {
-                "required": ["text"],
-                "properties": {
-                  "text": {
-                    "type": "string",
-                    "example": "This is some example string!"
-                  }
+                },
+                responses: {
+                  "201": {
+                    "description": "Success",
+                    "message":"user logged in successfully",
+                    "token": "jwt_token",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                            // "$ref": "#/components/schemas/ExampleSchemaHeader"
+
+                        }
+                      }
+                    }
+                  },
+                  "401": { "description": "Invalid Credentials" },
+                  "500": { "description": "Internal server error" }
                 }
               }
-            }
+            },
+            "/auth/forgotpassword": {
+              "post": {
+                "tags": ["ExampleEndpoints"],
+                "summary": "Forgot password ",
+                "description": " Generate a new resertPassword and send it to the user via email using sendinblue.",
+
+
+
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": `${UserSchema}`
+
+                      }
+                    }
+                  }
+                },
+                responses: {
+                  "201": {
+                    "description": "Success",
+                    "success": "true", 
+                   "data":"Email Sent",
+                   "messsage": `<h1> You have requested a password reset </h1>
+                   <p> Please go to this link to reset your password </p>
+                   <a href=<resetUrl> clicktracking=off><resetUrl>`,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                            // "$ref": "#/components/schemas/ExampleSchemaHeader"
+
+                        }
+                      }
+                    }
+                  },
+                  "401": { "description": "email could not be sent" },
+                  "500": { "description": "Internal server error" }
+                }
+              }
+            },
+            "/auth/resetpassword": {
+              "post": {
+                "tags": ["ExampleEndpoints"],
+                "summary": "reset password token",
+                "description": "Generate a reset password token and reset password expiration and save it in the database",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": `${UserSchema}`
+
+                      }
+                    }
+                  }
+                },
+                responses: {
+                  "201": {
+                    "success": "true",
+                    "data":"Password Reset successful",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                            // "$ref": "#/components/schemas/ExampleSchemaHeader"
+
+                        }
+                      }
+                    }
+                  },
+                  "400": { "description": "invalid reset Token" },
+                  "500": { "description": "Internal server error" }
+                }
+              }
+            },
           }
         }
        
