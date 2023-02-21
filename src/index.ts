@@ -6,7 +6,7 @@ import { connectDB } from "./config/db";
 import  router  from "./routes/auth";
 import crudRouter from "./routes/crud";
 import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from "./swagger.ts/swaggerDefinition";
+import swaggerSpec from "./swagger/swaggerDefinition";
 const app= express();
 const PORT= process.env.PORT || 5000;
 
